@@ -1,7 +1,8 @@
-package com.abhay.cleanarchitecture
+package com.abhay.cleanarchitecture.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.abhay.cleanarchitecture.R
 
 class MainActivity : AppCompatActivity() {
 
