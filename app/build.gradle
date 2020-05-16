@@ -23,7 +23,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
 }
+
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -35,10 +41,14 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 
-    implementation 'com.google.dagger:dagger-android:2.20'
-    implementation 'com.google.dagger:dagger-android-support:2.20' // if you use the support libraries
-    kapt 'com.google.dagger:dagger-android-processor:2.20'
-    kapt 'com.google.dagger:dagger-compiler:2.20'
+    implementation "com.google.dagger:dagger:2.20"
+    kapt "com.google.dagger:dagger-compiler:2.20"
+    compileOnly "org.glassfish:javax.annotation:3.1.1"
+
+
+
+
+
 
     implementation 'com.jakewharton:butterknife:10.2.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.1'
@@ -52,18 +62,20 @@ dependencies {
     def lifecycle_version = "2.2.0"
     def arch_version = "2.1.0"
 
-    // ViewModel
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    // LiveData
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
-    // Lifecycles only (without ViewModel or LiveData)
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+
 
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
 
+    // Data binding
+    kapt "com.android.databinding:compiler:3.1.4"
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
 
+}
 
+kapt {
+    generateStubs = true
 }
