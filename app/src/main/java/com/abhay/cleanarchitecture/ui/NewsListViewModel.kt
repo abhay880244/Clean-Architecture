@@ -4,11 +4,13 @@ import android.view.View
 import androidx.lifecycle.MutableLiveData
 import com.abhay.cleanarchitecture.db.ArticleDAO
 import com.abhay.cleanarchitecture.models.Articles
+import com.abhay.cleanarchitecture.models.NewsResponse
 import com.abhay.cleanarchitecture.network.NewsApiInterface
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class NewsListViewModel(private val articleDao: ArticleDAO) : BaseViewModel() {
@@ -18,7 +20,6 @@ class NewsListViewModel(private val articleDao: ArticleDAO) : BaseViewModel() {
     lateinit var newsApiInterface: NewsApiInterface
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
-
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadNews() }
 
@@ -35,7 +36,7 @@ class NewsListViewModel(private val articleDao: ArticleDAO) : BaseViewModel() {
             Observable.fromCallable { articleDao.all }
                 .concatMap { dbArticlesList ->
                     if (dbArticlesList.isEmpty()) {
-                        newsApiInterface.getNews().concatMap { response ->
+                        newsApiInterface.getNews("").concatMap { response ->
                             articleDao.insertAll(*response.articles.toTypedArray())
                             Observable.just(response.articles)
                         }
