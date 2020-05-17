@@ -5,16 +5,12 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Articles (
-
-	val source : Source,
-	val author : String,
-	val title : String,
-	val description : String,
-	val url : String,
-	val urlToImage : String,
-	val publishedAt : String,
-	val content : String
+	var author : String?,
+	var title : String?,
+	var description : String?,
+	var publishedAt : String?,
+	var content : String?
 ) {
 	@PrimaryKey(autoGenerate = true)
-	val id : Int = 0
+	var id : Int = 0
 }

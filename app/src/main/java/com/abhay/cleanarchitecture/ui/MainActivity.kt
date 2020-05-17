@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        viewModel = ViewModelProviders.of(this).get(NewsListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this,ViewModelFactory(this)).get(NewsListViewModel::class.java)
         binding.viewModel = viewModel
 
 

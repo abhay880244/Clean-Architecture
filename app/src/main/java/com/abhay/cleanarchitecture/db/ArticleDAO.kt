@@ -6,7 +6,7 @@ import androidx.room.Query
 import com.abhay.cleanarchitecture.models.Articles
 
 @Dao
-interface AricleDAO {
+interface ArticleDAO {
 
     @get : Query("select * from articles")
     val all : List<Articles>

@@ -2,14 +2,16 @@ package com.abhay.cleanarchitecture.ui
 
 import android.view.View
 import androidx.lifecycle.MutableLiveData
+import com.abhay.cleanarchitecture.db.ArticleDAO
 import com.abhay.cleanarchitecture.models.Articles
 import com.abhay.cleanarchitecture.network.NewsApiInterface
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class NewsListViewModel : BaseViewModel() {
+class NewsListViewModel(private val articleDao: ArticleDAO) : BaseViewModel() {
 
     val articleListAdapter = ArticleListAdapter()
     @Inject
@@ -17,7 +19,7 @@ class NewsListViewModel : BaseViewModel() {
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
 
-    val errorMessage:MutableLiveData<Int> = MutableLiveData()
+    val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadNews() }
 
 
@@ -28,26 +30,36 @@ class NewsListViewModel : BaseViewModel() {
     }
 
 
-
     private fun loadNews() {
-        subscription = newsApiInterface.getNews()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnTerminate { onRetrieveNewsListFinish() }
-            .doOnSubscribe { onRetrieveNewsListStart() }
-            .subscribe(
-                {onRetrieveNewsListSuccess(it.articles)},
-                {onRetrieveNewsListError()}
-            )
+        subscription =
+            Observable.fromCallable { articleDao.all }
+                .concatMap { dbArticlesList ->
+                    if (dbArticlesList.isEmpty()) {
+                        newsApiInterface.getNews().concatMap { response ->
+                            articleDao.insertAll(*response.articles.toTypedArray())
+                            Observable.just(response.articles)
+                        }
+                    } else {
+                        Observable.just(dbArticlesList)
+                    }
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate { onRetrieveNewsListFinish() }
+                .doOnSubscribe { onRetrieveNewsListStart() }
+                .subscribe(
+                    { onRetrieveNewsListSuccess(it) },
+                    { onRetrieveNewsListError() }
+                )
     }
 
-    private fun onRetrieveNewsListStart(){
+    private fun onRetrieveNewsListStart() {
         loadingVisibility.value = View.VISIBLE
         errorMessage.value = null
 
     }
 
-    private fun onRetrieveNewsListFinish(){
+    private fun onRetrieveNewsListFinish() {
         loadingVisibility.value = View.GONE
     }
 
@@ -55,7 +67,7 @@ class NewsListViewModel : BaseViewModel() {
         articleListAdapter.updateArticlesList(articles)
     }
 
-    private fun onRetrieveNewsListError(){
+    private fun onRetrieveNewsListError() {
         errorMessage.value = 1
     }
 
