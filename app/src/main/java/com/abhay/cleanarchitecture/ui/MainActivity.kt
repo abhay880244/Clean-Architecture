@@ -2,9 +2,11 @@ package com.abhay.cleanarchitecture.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.LinearLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.abhay.cleanarchitecture.R
 import com.abhay.cleanarchitecture.databinding.ActivityMainBinding
@@ -20,6 +22,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.postList.addItemDecoration(DividerItemDecoration(this,LinearLayout.VERTICAL))
 
         viewModel = ViewModelProviders.of(this,ViewModelFactory(this)).get(NewsListViewModel::class.java)
         binding.viewModel = viewModel
