@@ -2,14 +2,16 @@ package com.abhay.cleanarchitecture.ui
 
 import android.view.View
 import androidx.lifecycle.MutableLiveData
+import com.abhay.cleanarchitecture.models.Articles
 import com.abhay.cleanarchitecture.network.NewsApiInterface
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class NewsListViewModel : BaseViewModel() {
 
+    val articleListAdapter = ArticleListAdapter()
     @Inject
     lateinit var newsApiInterface: NewsApiInterface
 
@@ -31,10 +33,10 @@ class NewsListViewModel : BaseViewModel() {
         subscription = newsApiInterface.getNews()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .doOnTerminate { onRetrieveNewsListError() }
-            .doOnSubscribe { onRetrieveNewsListFinish() }
+            .doOnTerminate { onRetrieveNewsListFinish() }
+            .doOnSubscribe { onRetrieveNewsListStart() }
             .subscribe(
-                {onRetrieveNewsListSuccess()},
+                {onRetrieveNewsListSuccess(it.articles)},
                 {onRetrieveNewsListError()}
             )
     }
@@ -49,8 +51,8 @@ class NewsListViewModel : BaseViewModel() {
         loadingVisibility.value = View.GONE
     }
 
-    private fun onRetrieveNewsListSuccess(){
-
+    private fun onRetrieveNewsListSuccess(articles: List<Articles>) {
+        articleListAdapter.updateArticlesList(articles)
     }
 
     private fun onRetrieveNewsListError(){

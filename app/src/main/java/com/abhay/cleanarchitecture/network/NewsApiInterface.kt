@@ -1,7 +1,7 @@
 package com.abhay.cleanarchitecture.network
 
 import com.abhay.cleanarchitecture.models.NewsResponse
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.Observable
 import retrofit2.http.GET
 
 interface NewsApiInterface {

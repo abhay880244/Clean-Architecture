@@ -13,6 +13,9 @@ object NetworkModule {
 
     private const val BASE_URL = "http://newsapi.org"
 
+    @Provides
+    @Reusable
+    @JvmStatic
     fun provideNewsApiInterface(retrofit: Retrofit) : NewsApiInterface{
         return retrofit.create(NewsApiInterface::class.java)
     }
@@ -24,8 +27,8 @@ object NetworkModule {
     internal fun getRetrofitClientInstance(): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
 }
