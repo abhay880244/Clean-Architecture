@@ -15,6 +15,10 @@ class NewsListViewModel : BaseViewModel() {
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
 
+    val errorMessage:MutableLiveData<Int> = MutableLiveData()
+    val errorClickListener = View.OnClickListener { loadNews() }
+
+
     private lateinit var subscription: Disposable
 
     init {
@@ -37,6 +41,7 @@ class NewsListViewModel : BaseViewModel() {
 
     private fun onRetrieveNewsListStart(){
         loadingVisibility.value = View.VISIBLE
+        errorMessage.value = null
 
     }
 
@@ -49,7 +54,7 @@ class NewsListViewModel : BaseViewModel() {
     }
 
     private fun onRetrieveNewsListError(){
-
+        errorMessage.value = 1
     }
 
     override fun onCleared() {
