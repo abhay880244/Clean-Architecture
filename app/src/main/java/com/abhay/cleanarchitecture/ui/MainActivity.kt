@@ -67,11 +67,10 @@ class MainActivity : AppCompatActivity() {
         observableQueryText
             .doOnSubscribe { disposable.add(it) }
             .debounce(500, TimeUnit.MILLISECONDS)
-            .subscribeOn(AndroidSchedulers.mainThread())
-            .observeOn(Schedulers.io())
             .switchMap<NewsResponse> { query -> viewModel.newsApiInterface.getNews(query) }
-            .observeOn(AndroidSchedulers.mainThread())
             .distinctUntilChanged()
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {
                     if(it.articles!=null && it.articles.isNotEmpty()){
